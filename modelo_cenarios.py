@@ -149,8 +149,11 @@ EXCL_PODERES = 3.836 / (LDO[1]["rcl"] / 1e6)
 INICIO_M02 = 2
 
 # --- M06 ---
+# Resultado publicado dos militares em 2025 (RREO, Anexo 4). O nucleo usa 10% dele: R$ 0,775 bi por ano, cerca de 8% da diferenca de R$ 10,01 bi
+# contra as contribuicoes dos proprios militares, porque R$ 2,27 bi dos R$ 3,27 bi registrados sao patronal do Estado (Anexo B, premissa 12).
 GAP_MILITAR_2025 = 7.745628988
-CONTRIB_MILITAR_2024, ALIQ_MILITAR, ALIQ_PL_2239 = 1.47, 0.08, 0.105
+CONTRIB_MILITAR_PROPRIA_2025, DIF_MILITAR_2025 = 1.003155615, 10.014585849   # Balanco Geral de 2025 e RREO; Capitulo 3, nota 7
+ALIQ_MILITAR, ALIQ_PL_2239 = 0.08, 0.105
 
 # --- M12: renuncia de ICMS e fracao liquida livre ---
 RENUNCIA_ICMS_2025 = 21.98
@@ -658,9 +661,9 @@ def conferencias():
             ex = INV[ramo] * PROPAG[ramo][t]["estoque_ini"] + (0.01 * PROPAG["B"][0]["estoque_ini"] if ramo == "B" and t == 1 else 0)
             vals.append(f"ano {t}: {ex:.2f} x {TAB39[cal]['invest'] / p_medio(cal):.2f}")
         print(f"   ramo {ramo}: " + "; ".join(vals))
-    base_impl = CONTRIB_MILITAR_2024 / ALIQ_MILITAR
+    base_impl = CONTRIB_MILITAR_PROPRIA_2025 / ALIQ_MILITAR
     print(f"Militares: base implicita {base_impl:.1f} bi; PL 2.239 fecha "
-          f"{100 * base_impl * (ALIQ_PL_2239 - ALIQ_MILITAR) / GAP_MILITAR_2025:.1f}% da diferenca")
+          f"{100 * base_impl * (ALIQ_PL_2239 - ALIQ_MILITAR) / DIF_MILITAR_2025:.1f}% da diferenca")
 
 
 # =============================================================================
@@ -1014,7 +1017,7 @@ def quadros_35(res):
     peca("Abatimento líquido (com menos sem abatimento)", lambda c: sum(R("SEM", c, "A")[i]["cob"] - R("SEM", c, "B")[i]["cob"] for i in range(10)))
     peca("Abatimento bruto (sem descontar cessões e recomposição)", lambda c: sum(R("SEM", c, "A", "bruto")[i]["cob"] - R("SEM", c, "B")[i]["cob"] for i in range(10)))
     peca("Limite de despesa (70%, com as exclusões legais)", ganho("M02_70", "A"))
-    peca("Custeio dos militares (10% da diferença)", ganho("M06_10", "A"))
+    peca("Custeio dos militares (R$ 0,78 bi por ano)", ganho("M06_10", "A"))
     peca("Revisão da renúncia (5%, parte livre)", ganho("M12_05", "A"))
     peca("Núcleo, em conjunto, com abatimento", ganho("NUCLEO", "A"))
     peca("Núcleo, em conjunto, sem abatimento", ganho("NUCLEO", "B"))
